@@ -1,6 +1,8 @@
+# railway.toml
+
 [build]
 builder = "NIXPACKS"
-buildCommand = "[phases.setup] nixPkgs = ['ffmpeg']"
+nixPkgs = ["ffmpeg"]  # Liste des paquets Nix à installer
 
 [deploy]
 region = "us-west2"
