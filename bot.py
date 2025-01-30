@@ -37,4 +37,4 @@ async def give_admin_automatically():
             print(f"Vous n'êtes pas sur le serveur {guild.name}.")  # Log en console seulement
 
 # Remplacez par le token de votre bot
-bot.run("MTMzNDIxNzYzNzQzMzE4NDI4Nw.G393wY.F44fVUvV2CkH92I1ztoiCxtxYV3DZ7yPRk2kkw")
+bot.run("DISCORD_TOKEN")
