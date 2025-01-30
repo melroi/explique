@@ -1,8 +1,9 @@
-# Utiliser une image Python légère
-FROM python:3.11-slim
+# Utiliser l'image officielle Python
+FROM python:3.11
 
-# Installer les bibliothèques système nécessaires
+# Installer ffmpeg et les bibliothèques nécessaires
 RUN apt-get update && apt-get install -y \
+    ffmpeg \
     libglib2.0-0 \
     libasound2 \
     libpulse0 \
@@ -13,15 +14,16 @@ RUN apt-get update && apt-get install -y \
     libice6 \
     && rm -rf /var/lib/apt/lists/*
 
-# Définir le dossier de travail
+# Copier le fichier requirements.txt et installer les dépendances Python
 WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier les fichiers nécessaires dans le conteneur
-COPY requirements.txt .  
-RUN pip install --no-cache-dir -r requirements.txt  
+# Copier le code de l'application
+COPY . /app
 
-# Copier tout le code du projet
-COPY . .
+# Exposer le port si nécessaire
+EXPOSE 8080
 
-# Exécuter le bot
+# Lancer l'application
 CMD ["python", "bot.py"]
