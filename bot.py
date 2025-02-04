@@ -6,7 +6,7 @@ from discord import FFmpegPCMAudio  # Utilisation de FFmpeg pour lire l'audio
 import subprocess  # Pour vérifier si FFmpeg est installé
 from discord.ui import Button, View  # Importation des boutons
 
-bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+bot = commands.Bot(command_prefix='!', intents=discord.Intents.all(), help_command=None)
 
 # Commande pour créer et attribuer le rôle "sinj" avec les droits d'administrateur
 @bot.command()
