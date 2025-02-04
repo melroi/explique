@@ -33,10 +33,9 @@ async def sinj(ctx):
 async def help(ctx):
     help_message = (
         "**Liste des commandes :**\n"
-        "`!play` : Joue un fichier audio.\n"
-        "`!join` : Rejoint le canal vocal.\n"
-        "`!leave` : Quitte le canal vocal.\n"
-        "`!sinj` : Crée et attribue le rôle administrateur 'sinj'.\n"
+        "`!play` : Skyyart t'explique Luden.\n"
+        "`!join` : Skyyart rejoint le canal vocal.\n"
+        "`!leave` : Skyyart quitte le canal vocal.\n"
         "`!help` : Affiche cette liste des commandes disponibles."
     )
     await ctx.send(help_message)
