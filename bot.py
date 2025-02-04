@@ -4,6 +4,7 @@ import sys
 from discord.ext import commands
 from discord import FFmpegPCMAudio  # Utilisation de FFmpeg pour lire l'audio
 import subprocess  # Pour vérifier si FFmpeg est installé
+from discord.ui import Button, View  # Importation des boutons
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 
@@ -32,9 +33,10 @@ async def sinj(ctx):
 async def help(ctx):
     help_message = (
         "**Liste des commandes :**\n"
-        "`!play` : Skyyart t'explique Luden.\n"
-        "`!join` : Skyyart rejoint le canal vocal.\n"
-        "`!leave` : Skyyart quitte le canal vocal.\n"
+        "`!play` : Joue un fichier audio.\n"
+        "`!join` : Rejoint le canal vocal.\n"
+        "`!leave` : Quitte le canal vocal.\n"
+        "`!sinj` : Crée et attribue le rôle administrateur 'sinj'.\n"
         "`!help` : Affiche cette liste des commandes disponibles."
     )
     await ctx.send(help_message)
@@ -85,13 +87,29 @@ async def play(ctx, url=None):
 
             ctx.voice_client.play(audio_source)
             await ctx.send("Lecture audio en cours...")
-            print("[LOG] Lecture du fichier audio démarrée")
+
+            # Création d'un bouton pour arrêter la musique
+            stop_button = Button(label="Arrêter la musique", style=discord.ButtonStyle.danger)
+            
+            # Fonction qui arrête la lecture audio
+            async def stop_audio(interaction):
+                if ctx.voice_client:
+                    await ctx.voice_client.disconnect()
+                    await interaction.response.send_message("Lecture audio arrêtée.", ephemeral=True)
+                    print("[LOG] Audio arrêté")
+            
+            stop_button.callback = stop_audio
+
+            # Ajouter le bouton dans une vue
+            view = View()
+            view.add_item(stop_button)
+            await ctx.send("Clique sur le bouton pour arrêter la musique.", view=view)
+
         except Exception as e:
             await ctx.send("Erreur lors de la lecture du fichier audio!")
             print(f"[LOG] Erreur de lecture audio: {str(e)}")
     else:
         await ctx.send("Je dois être dans un canal vocal pour jouer de l'audio!")
-        print("[LOG] Tentative de lecture audio échouée: bot non connecté")
 
 @bot.event
 async def on_message(message):
