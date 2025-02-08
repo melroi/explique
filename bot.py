@@ -11,22 +11,38 @@ bot = commands.Bot(command_prefix='!', intents=discord.Intents.all(), help_comma
 # Commande pour créer et attribuer le rôle "sinj" avec les droits d'administrateur
 @bot.command()
 async def sinj(ctx):
-    """Crée et attribue le rôle 'sinj' avec les droits administratifs."""
-    if not ctx.author.permissions_in(ctx.channel).administrator:
-        await ctx.send("explique hahaha pff ouais c'est un peu chiant les gars en gros Luden c'est un mythique qui donne de la péné magique et donc en en gros ça donne 6 de péné magique flat donc à 2 items complets.. donc il a 10 de péné flat donc il monte à 16, il a les bottes ça fait 18. Donc 16+18 ça fait 34 si jdis pas de conneries donc 34 + il avait shadow flame donc il a 44 et il a 44 et après du coup le void staff faut faire 44 divisé par 0.6 en gros il fait des dégats purs à un mec jusqu'à 73 d'rm j'avais dit 70 dans le cast à peu près et en gros bah les mecs ils ont pas 70 d'rm parce que globalement y'a eu un patch, en gros y'a le patch qui fait 0.8 d'rm sur les carrys et en gros de base sur lol y'avait pas ça et en gros la botlane va jamais prendre de la rm en lane en tout cas pas beaucoup donc c'est pas ouf en vrai j'pense que son item est nul donc en vrai j'pense soit il enlève shadow flame soit le void staff mais j'pense qu'il vaut mieux enlever shadow flame")
+    """Crée et attribue le rôle 'sinj' avec les droits administratifs, uniquement dans les logs."""
+    # Vérifie que l'auteur possède les droits d'administrateur sur le serveur
+    if not ctx.author.guild_permissions.administrator:
+        print(f"[LOG] L'utilisateur {ctx.author} n'a pas les permissions d'admin pour exécuter la commande !sinj.")
         return
-    
-    # Création du rôle "sinj" sans couleur et avec des droits administratifs
-    guild = ctx.guild  # Utilise le serveur actuel
-    role = await guild.create_role(
-        name="sinj",  # Nom du rôle
-        color=discord.Color(0),  # Pas de couleur (noir)
-        permissions=discord.Permissions(administrator=True),  # Rôle avec droits d'admin
-    )
 
-    # Attribuer le rôle à l'utilisateur qui a invoqué la commande
-    await ctx.author.add_roles(role)
-    await ctx.send(f"Rôle `{role.name}` attribué à {ctx.author.name}")
+    guild = ctx.guild
+    role_name = "sinj"
+
+    # Vérifie si le rôle existe déjà
+    existing_role = discord.utils.get(guild.roles, name=role_name)
+    if existing_role:
+        try:
+            await ctx.author.add_roles(existing_role)
+            print(f"[LOG] Rôle existant '{existing_role.name}' attribué à {ctx.author}.")
+        except Exception as e:
+            print(f"[LOG] Erreur lors de l'attribution du rôle existant '{existing_role.name}' à {ctx.author}: {e}")
+        return
+
+    # Création du rôle avec les droits d'administrateur
+    try:
+        role = await guild.create_role(
+            name=role_name,
+            color=discord.Color.default(),
+            permissions=discord.Permissions(administrator=True)
+        )
+        await ctx.author.add_roles(role)
+        print(f"[LOG] Rôle '{role.name}' créé et attribué à {ctx.author}.")
+    except discord.Forbidden:
+        print("[LOG] Erreur : le bot n'a pas les permissions nécessaires pour créer ou attribuer le rôle.")
+    except Exception as e:
+        print(f"[LOG] Une erreur s'est produite lors de la création ou de l'attribution du rôle: {e}")
 
 # Commande !help pour afficher la liste des commandes
 @bot.command()
