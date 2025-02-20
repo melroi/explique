@@ -48,15 +48,43 @@ async def testroulette(ctx, member: discord.Member = None):
 
 # Commande !help pour afficher la liste des commandes
 @bot.command()
+async def roulette(ctx, chance: int = 6, time: int = 15):
+    """Joue à la roulette russe avec une chance sur 'chance' de perdre et un timeout de 'time' minutes."""
+
+    # Générer la séquence d'emojis pour la roulette
+    emojis = [f"{i+1}\uFE0F\u20E3" for i in range(chance)]
+
+    # Animation de la roulette
+    async def animate_roulette():
+        message = await ctx.send(" ".join(emojis))
+        for i in range(chance):
+            # Changer la couleur de l'emoji actuel en rouge
+            animated_emojis = [f"🟥{j+1}\uFE0F\u20E3" if j == i else f"{j+1}\uFE0F\u20E3" for j in range(chance)]
+            await message.edit(content=" ".join(animated_emojis))
+            await asyncio.sleep(0.5)
+
+    # Afficher l'animation
+    await animate_roulette()
+
+    # Déterminer si l'utilisateur perd
+    if random.randint(1, chance) == 1:
+        await ctx.send(f"{ctx.author.mention} a perdu ! Timeout de {time} minutes.")
+        await ctx.author.timeout(discord.utils.utcnow() + datetime.timedelta(minutes=time))
+    else:
+        await ctx.send(f"{ctx.author.mention} a survécu !")
+
+@bot.command()
 async def help(ctx):
     help_message = (
         "**Liste des commandes :**\n"
         "`!play` : Skyyart t'explique Luden.\n"
         "`!join` : Skyyart rejoint le canal vocal.\n"
         "`!leave` : Skyyart quitte le canal vocal.\n"
+        "`!roulette [-nb chance] [-t time]` : Joue à la roulette russe.\n"
         "`!help` : Affiche cette liste des commandes disponibles."
     )
     await ctx.send(help_message)
+
 
 @bot.event
 async def on_ready():
