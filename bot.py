@@ -45,8 +45,6 @@ async def testroulette(ctx, member: discord.Member = None):
         print("[LOG] Erreur : le bot n'a pas la permission d'ajouter ce rôle.")
     except Exception as e:
         print(f"[LOG] Une erreur s'est produite lors de l'attribution du rôle: {e}")
-
-# Commande !help pour afficher la liste des commandes
 @bot.command()
 async def roulette(ctx, chance: int = 6, time: int = 15):
     """Joue à la roulette russe avec une chance sur 'chance' de perdre et un timeout de 'time' minutes."""
@@ -68,10 +66,16 @@ async def roulette(ctx, chance: int = 6, time: int = 15):
 
     # Déterminer si l'utilisateur perd
     if random.randint(1, chance) == 1:
-        await ctx.send(f"{ctx.author.mention} a perdu ! Timeout de {time} minutes.")
-        await ctx.author.timeout(discord.utils.utcnow() + datetime.timedelta(minutes=time))
+        try:
+            await ctx.send(f"{ctx.author.mention} a perdu ! Timeout de {time} minutes.")
+            await ctx.author.timeout(discord.utils.utcnow() + datetime.timedelta(minutes=time))
+        except discord.Forbidden:
+            await ctx.send("Je n'ai pas les permissions nécessaires pour mettre cet utilisateur en timeout.")
+        except Exception as e:
+            await ctx.send(f"Une erreur s'est produite : {e}")
     else:
         await ctx.send(f"{ctx.author.mention} a survécu !")
+
 
 @bot.command()
 async def help(ctx):
